@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tổng hợp bài tập JavaScript</title>
+  <style>
+    body { font-family: Arial; padding: 20px; line-height: 1.6; }
+    h2 { color: #2c3e50; }
+    .section { margin-bottom: 50px; border-bottom: 2px dashed #ccc; padding-bottom: 30px; }
+    label { font-weight: bold; display: block; margin-top: 10px; }
+    input, select, button { width: 100%; padding: 10px; margin: 6px 0; }
+    button { background: #3498db; color: white; border: none; cursor: pointer; }
+    button:hover { background: #2980b9; }
+  </style>
+</head>
+<body>
+
+  <div class="section">
+    <h2>Bài 1: Tính thuế thu nhập cá nhân</h2>
+    <label>Họ tên:</label>
+    <input type="text" id="hoTen">
+    <label>Tổng thu nhập năm (triệu):</label>
+    <input type="number" id="thuNhapNam">
+    <label>Số người phụ thuộc:</label>
+    <input type="number" id="nguoiPhuThuoc">
+    <button onclick="tinhThue()">Tính thuế</button>
+    <h3 id="ketQuaThue"></h3>
+  </div>
+
+  <div class="section">
+    <h2>Bài 2: Tính tiền cáp</h2>
+    <label>Mã khách hàng:</label>
+    <input type="text" id="maKH">
+    <label>Loại khách hàng:</label>
+    <select id="loaiKH" onchange="toggleKetNoi()">
+      <option value="nhaDan">Nhà dân</option>
+      <option value="doanhNghiep">Doanh nghiệp</option>
+    </select>
+    <label>Số kênh cao cấp:</label>
+    <input type="number" id="soKenh">
+    <label id="labelKetNoi" style="display:none">Số kết nối:</label>
+    <input type="number" id="soKetNoi" style="display:none">
+    <button onclick="tinhTienCap()">Tính tiền cáp</button>
+    <h3 id="ketQuaCap"></h3>
+  </div>
+
+  <div class="section">
+    <h2>Bài 3: Tính tiền điện</h2>
+    <label>Tên:</label>
+    <input type="text" id="tenKH">
+    <label>Số Kw tiêu thụ:</label>
+    <input type="number" id="soKw">
+    <button onclick="tinhTienDien()">Tính tiền điện</button>
+    <h3 id="ketQuaDien"></h3>
+  </div>
+
+  <div class="section">
+    <h2>Bài 4: Quản lý tuyển sinh</h2>
+    <label>Điểm chuẩn:</label>
+    <input type="number" id="diemChuan">
+    <label>Điểm môn 1:</label>
+    <input type="number" id="mon1">
+    <label>Điểm môn 2:</label>
+    <input type="number" id="mon2">
+    <label>Điểm môn 3:</label>
+    <input type="number" id="mon3">
+    <label>Khu vực:</label>
+    <select id="khuVuc">
+      <option value="X">X (Không ưu tiên)</option>
+      <option value="A">A (2 điểm)</option>
+      <option value="B">B (1 điểm)</option>
+      <option value="C">C (0.5 điểm)</option>
+    </select>
+    <label>Đối tượng:</label>
+    <select id="doiTuong">
+      <option value="0">0 (Không ưu tiên)</option>
+      <option value="1">1 (2.5 điểm)</option>
+      <option value="2">2 (1.5 điểm)</option>
+      <option value="3">3 (1 điểm)</option>
+    </select>
+    <button onclick="kiemTraKetQua()">Kiểm tra kết quả</button>
+    <h3 id="ketQua"></h3>
+  </div>
+
+<script>
+  function tinhThue() {
+    const thuNhap = Number(document.getElementById("thuNhapNam").value);
+    const nguoiPhuThuoc = Number(document.getElementById("nguoiPhuThuoc").value);
+    const chiuThue = thuNhap - 4 - nguoiPhuThuoc * 1.6;
+    let thue = 0;
+    if (chiuThue <= 0) thue = 0;
+    else if (chiuThue <= 60) thue = chiuThue * 0.05;
+    else if (chiuThue <= 120) thue = chiuThue * 0.1;
+    else if (chiuThue <= 210) thue = chiuThue * 0.15;
+    else if (chiuThue <= 384) thue = chiuThue * 0.2;
+    else if (chiuThue <= 624) thue = chiuThue * 0.25;
+    else if (chiuThue <= 960) thue = chiuThue * 0.3;
+    else thue = chiuThue * 0.35;
+    document.getElementById("ketQuaThue").innerText = `Thuế TNCN phải trả: ${thue.toFixed(2)} triệu`;
+  }
+
+  function toggleKetNoi() {
+    const loai = document.getElementById("loaiKH").value;
+    const ketNoiInput = document.getElementById("soKetNoi");
+    const ketNoiLabel = document.getElementById("labelKetNoi");
+    if (loai === "doanhNghiep") {
+      ketNoiInput.style.display = "block";
+      ketNoiLabel.style.display = "block";
+    } else {
+      ketNoiInput.style.display = "none";
+      ketNoiLabel.style.display = "none";
+    }
+  }
+
+  function tinhTienCap() {
+    const loai = document.getElementById("loaiKH").value;
+    const soKenh = Number(document.getElementById("soKenh").value);
+    let tong = 0;
+    if (loai === "nhaDan") {
+      tong = 4.5 + 20.5 + 7.5 * soKenh;
+    } else {
+      const ketNoi = Number(document.getElementById("soKetNoi").value);
+      let phiKetNoi = 75;
+      if (ketNoi > 10) {
+        phiKetNoi += (ketNoi - 10) * 5;
+      }
+      tong = 15 + phiKetNoi + 50 * soKenh;
+    }
+    document.getElementById("ketQuaCap").innerText = `Tiền cáp phải trả: $${tong.toFixed(2)}`;
+  }
+
+  function tinhTienDien() {
+    const soKw = Number(document.getElementById("soKw").value);
+    let tong = 0;
+    if (soKw <= 50) tong = soKw * 500;
+    else if (soKw <= 100) tong = 50 * 500 + (soKw - 50) * 650;
+    else if (soKw <= 200) tong = 50 * 500 + 50 * 650 + (soKw - 100) * 850;
+    else if (soKw <= 350) tong = 50 * 500 + 50 * 650 + 100 * 850 + (soKw - 200) * 1100;
+    else tong = 50 * 500 + 50 * 650 + 100 * 850 + 150 * 1100 + (soKw - 350) * 1300;
+    document.getElementById("ketQuaDien").innerText = `Tiền điện phải trả: ${tong.toLocaleString()}đ`;
+  }
+
+  function kiemTraKetQua() {
+    const diemChuan = Number(document.getElementById("diemChuan").value);
+    const mon1 = Number(document.getElementById("mon1").value);
+    const mon2 = Number(document.getElementById("mon2").value);
+    const mon3 = Number(document.getElementById("mon3").value);
+    const khuVuc = document.getElementById("khuVuc").value;
+    const doiTuong = Number(document.getElementById("doiTuong").value);
+
+    if (mon1 === 0 || mon2 === 0 || mon3 === 0) {
+      document.getElementById("ketQua").innerText = "Rớt do có môn 0 điểm.";
+      return;
+    }
+
+    let diemUuTienKV = 0;
+    if (khuVuc === "A") diemUuTienKV = 2;
+    else if (khuVuc === "B") diemUuTienKV = 1;
+    else if (khuVuc === "C") diemUuTienKV = 0.5;
+
+    let diemUuTienDT = 0;
+    if (doiTuong === 1) diemUuTienDT = 2.5;
+    else if (doiTuong === 2) diemUuTienDT = 1.5;
+    else if (doiTuong === 3) diemUuTienDT = 1;
+
+    const tongDiem = mon1 + mon2 + mon3 + diemUuTienKV + diemUuTienDT;
+    const ketQua = tongDiem >= diemChuan ? "ĐẬU" : "RỚT";
+    document.getElementById("ketQua").innerText = `Tổng điểm: ${tongDiem} → Kết quả: ${ketQua}`;
+  }
+</script>
+
+</body>
+</html>
